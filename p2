@@ -1,4 +1,4 @@
-// basic geometric operation on the 2d onjects
+// basic geometric operation on the 2d objects
 
 #include <GL/glut.h>
 #include <stdio.h>
