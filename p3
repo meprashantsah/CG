@@ -1,0 +1,138 @@
+// 2d transformation on basic object
+
+#include<GL/glut.h>
+#include<stdlib.h>
+
+#define ORIGINAL 1
+#define TRANSLATE 2
+#define ROTATEZ 3
+#define ROTATE_PV 4
+#define SCALE 5
+
+int TRANSFORM = ORIGINAL;
+float tx=50, ty=50, tz=0;
+float sx=2, sy=3, sz=1; // Scale factors
+float theta=60, px=-50, py=-10;
+
+void obj(){
+    // Body
+    glColor3f(0.8,0.6,0.7);
+    glBegin(GL_POLYGON);
+        glVertex2f(-50,-10); glVertex2f(50,-10);
+        glVertex2f(50,30); glVertex2f(-50,30);
+    glEnd();
+
+    // Top part
+    glColor3f(0.7,0.8,0.8);
+    glBegin(GL_POLYGON);
+        glVertex2f(-40,30); glVertex2f(-30,55);
+        glVertex2f(40,55); glVertex2f(45,30);
+    glEnd();
+
+    // Tyres
+    glColor3f(0.2,0.2,0.2);
+    glPointSize(20);
+    glBegin(GL_POINTS);
+        glVertex2f(-35,-5); glVertex2f(35,-5);
+    glEnd();
+}
+
+void display(){
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    switch(TRANSFORM){
+        case ORIGINAL:
+            obj();
+            break;
+        case TRANSLATE:
+            glPushMatrix();
+            glTranslatef(tx, ty, tz);
+            obj();
+            glPopMatrix();
+            break;
+        case ROTATEZ:
+            glPushMatrix();
+            glRotatef(theta, 0, 0, 1);
+            obj();
+            glPopMatrix();
+            break;
+        case ROTATE_PV:
+            glPushMatrix();
+            glTranslatef(px, py, 0);
+            glRotatef(theta, 0, 0, 1);
+            glTranslatef(-px, -py, 0);
+            obj();
+            glPopMatrix();
+            break;
+        case SCALE:
+            glPushMatrix();
+            glScalef(sx, sy, sz); // Apply scaling
+            obj();
+            glPopMatrix();
+            break;
+    }
+
+    glFlush();
+}
+
+void myinit(){
+    glClearColor(1, 1, 1, 1);
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(-250, 250, -250, 250);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void rotMenu(int id){
+    switch(id){
+        case ROTATEZ:
+            TRANSFORM=ROTATEZ;
+            break;
+        case ROTATE_PV:
+            TRANSFORM=ROTATE_PV;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+void menu(int id){
+    switch(id){
+        case 0:
+            exit(0);
+            break;
+        case ORIGINAL:
+            TRANSFORM=ORIGINAL;
+            break;
+        case TRANSLATE:
+            TRANSFORM=TRANSLATE;
+            break;
+        case SCALE:
+            TRANSFORM=SCALE;
+            break;
+    }
+    glutPostRedisplay();
+}
+
+int main(int argc, char **argv){
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("2D Transformations");
+    myinit();
+   
+    int rid = glutCreateMenu(rotMenu);
+    glutAddMenuEntry("Rotate about z(60)", ROTATEZ);
+    glutAddMenuEntry("Rotate about Pivot", ROTATE_PV);
+    glutCreateMenu(menu);
+    glutAddMenuEntry("Exit", 0);
+    glutAddMenuEntry("Original", ORIGINAL);
+    glutAddMenuEntry("Translate", TRANSLATE);
+    glutAddMenuEntry("Scale", SCALE); // Add scale option to the menu
+    glutAddSubMenu("Rotate", rid);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+   
+    glutDisplayFunc(display);
+    glutMainLoop();
+   
+    return 0;    
+}
+
