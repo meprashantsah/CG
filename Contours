@@ -1,0 +1,15 @@
+import cv2 as cv
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+matplotlib.rc('figure',figsize=(15,5))
+
+img_chess=cv.imread('chessboard.png')
+img_chess_gray=cv.cvtColor(img_chess,cv.COLOR_BGR2GRAY)
+# Canny Edge/corner Detection:
+img_canny = cv.Canny(img_chess_gray, threshold1=100, threshold2=200)
+# Finding Contours
+contours,hierarchy = cv.findContours(img_canny,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+# Draw contours
+cv.drawContours(img_chess,contours,-1,(0,255,0),3)
+plt.imshow(img_chess)
