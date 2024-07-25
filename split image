@@ -1,0 +1,23 @@
+import cv2 as cv
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+img = cv.imread('puppy.png')
+img = cv.cvtColor(img,cv.COLOR_BGR2RGB)
+# Get the height, width, and number of channels of the image
+h,w,channels = img.shape
+# Calculate the center coordinates
+cx=w//2
+cy=h//2
+# Split the image into four quadrants
+tl=img[0:cy,0:cx]
+tr=img[0:cy,cx:w]
+bl=img[cy:h,0:cx]
+br=img[cy:h,cx:w]
+# Plot each quadrant
+plt.subplot(221);plt.imshow(tl);plt.title('top left')
+plt.subplot(222);plt.imshow(tr);plt.title('top right')
+plt.subplot(223);plt.imshow(bl);plt.title('bottom left')
+plt.subplot(224);plt.imshow(br);plt.title('bottom right')
+plt.show()
